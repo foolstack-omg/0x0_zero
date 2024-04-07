@@ -57,9 +57,9 @@ const base = {
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
     // mainnet,
-    // arbitrum,
-    base,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : [])
+    arbitrum,
+    // base,
+    // ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [goerli] : [])
   ],
   [publicProvider()]
 )
