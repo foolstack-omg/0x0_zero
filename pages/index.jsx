@@ -162,7 +162,7 @@ const Home = () => {
 
         </p>
        
-        {mounted && isConnected && currentChain?.id == 42161 && inputValue.length == 48(
+        {mounted && isConnected && currentChain?.id == 42161 && inputValue.length == 48 && (
           <Button onClick={() => {
             swapFaucet?.()
           }}>
