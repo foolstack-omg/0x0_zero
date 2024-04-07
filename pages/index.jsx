@@ -118,13 +118,11 @@ const Home = () => {
     if(isTransfered) {  
       toast({
         title: "Success",
-        description: txData?.blockHash,
         action: (
           <ToastAction altText="Success">Ok</ToastAction>
         ),
       })
       resetWrite()
-      resetSignature()
     }
   }, [isTransfered]);
 
