@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { useToast } from "@/components/ui/use-toast"
 import { Input } from "@/components/ui/input"
 import{ useState } from 'react';
+import axios from 'axios'
 
 
 import {
@@ -56,6 +57,7 @@ const Home = () => {
   const handleInputChange = (event) => { // 注意这里接收的是直接的input值，不再是事件对象
     console.log(event.target.value)
       setInputValue(event.target.value);
+     
   }
 
 
@@ -76,55 +78,44 @@ const Home = () => {
     
   //  console.log(totalSupplyData)
   // }, [totalSupplyData]);
-  // const {
-  //   data: signature,
-  //   signMessage,
-  //   reset: resetSignature
-  // } = useSignMessage({
-  //   onSuccess: (data, variables) => {
-      
-  //   },
-  // })
-
-  
-  const { config: contractWriteConfig } = usePrepareContractWrite({
-    ...contractConfig,
-    args: [1, inputValue],
-    functionName: 'swapFaucet',
-    value: '500000000000000'
-  });
   const {
-    data: mintData,
-    write: swapFaucet,
-    isLoading: isMintLoading,
-    isSuccess: isMintStarted,
-    reset: resetWrite,
-    error: mintError,
-  } = useContractWrite(contractWriteConfig);
-
- 
-  
-  const {
-    data: txData,
-    isSuccess: txSuccess,
-    error: txError,
-  } = useWaitForTransaction({
-    hash: mintData?.hash,
-  });
-
-  let isTransfered = txSuccess;
-  React.useEffect(() => {
-    console.log(`transfered.'`, txData)
-    if(isTransfered) {  
-      toast({
-        title: "Success",
-        action: (
-          <ToastAction altText="Success">Ok</ToastAction>
-        ),
+    data: signature,
+    signMessage,
+    reset: resetSignature
+  } = useSignMessage({
+    onSuccess: (data, variables) => {
+      console.log(data)
+      console.log(process.env.NEXT_PUBLIC_API_HOST)
+      axios({
+        method: 'post',
+        url: `${process.env.NEXT_PUBLIC_API_HOST}/get_bera`,
+        data: {
+          signature: data
+        }
+      }).then(res => {
+        console.log(`axios result:`, res.data)
+        if(res.data.status) {
+          toast({
+            title: `Success.`,
+            description: `${res.data.address}`,
+            action: (
+              <ToastAction altText="Success">Ok</ToastAction>
+            ),
+          })
+        } else {
+          toast({
+            title: `Failed.`,
+            description: `${res.data.msg}`,
+            action: (
+              <ToastAction altText="Failed">Ok</ToastAction>
+            ),
+          })
+        }
+        
       })
-      resetWrite()
-    }
-  }, [isTransfered]);
+     
+    },
+  })
 
   return (
     <div className={styles.container}>
@@ -139,15 +130,35 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
-       
+      <Toaster />
+      <ConnectButton />
         <h1 className={styles.title}>
-          Welcome to
+          🐻Bera Faucet🐻
         </h1>
 
         <p className={styles.description}>
-        <code className={styles.code}>⚡️ <b > 0x0 </b>  ⚡️{ "'s ToolKit"}</code>
+        <code className={styles.code}>{ 'Sign a message to get 0.1 Bera instantly. '}</code>
+        </p>
+        {/* <p className={styles.description}>
+        <code className={styles.code}>{ balance?.formatted == 0 && currentChain?.id == 42161 && '0x49048044D57e1C92A77f79988d21Fa8fAF74E97e'}</code>
+        </p> */}
+        <p>
         </p>
        
+        {mounted && isConnected && (
+          <Button onClick={() => {
+            signMessage({message: `request to get 0.1 bera.`})
+          }}>
+             {`Send bera to ${address}` }
+          </Button>
+        )}
+
+     
+       
+
+      {/* <p className={styles.description} >
+        <code className={styles.code}>Minted: {minted?.toString()}</code>
+        </p> */}
       </main>
 
       <footer className={styles.footer}>
@@ -155,7 +166,7 @@ const Home = () => {
            ⚡️ <b > 0x0 </b>  ⚡️
         </a>
       </footer>
-      <Toaster/>
+      
     </div>
      
   )

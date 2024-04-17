@@ -139,15 +139,43 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
+        <ConnectButton />
        
         <h1 className={styles.title}>
-          Welcome to
+          AVL Faucet Swap
         </h1>
 
         <p className={styles.description}>
-        <code className={styles.code}>⚡️ <b > 0x0 </b>  ⚡️{ "'s ToolKit"}</code>
+        <code className={styles.code}>{ 'Swap to get AVL about 1 minutes later. '}</code>
+        </p>
+        <p className={styles.description}>
+        <code className={styles.code}>{ '0.0005ETH = 0.1AVL'}</code>
+        </p>
+        {/* <p className={styles.description}>
+        <code className={styles.code}>{ balance?.formatted == 0 && currentChain?.id == 42161 && '0x49048044D57e1C92A77f79988d21Fa8fAF74E97e'}</code>
+        </p> */}
+
+        <p>
+        <Input style={{width: '600px', marginBottom: '20px'}} type="email" placeholder="Please input your Avail Address" value={inputValue} onChange={handleInputChange}/>
+
         </p>
        
+        {mounted && isConnected && currentChain?.id == 42161 && inputValue.length == 48 && (
+          <Button onClick={() => {
+            swapFaucet?.()
+          }}>
+             { `Swap`}
+          </Button>
+        )}
+        {currentChain?.id != 42161 && (
+          <p className={styles.description} >
+          <code className={styles.code}>Please switch to Arbitrum Network. </code>
+          </p>
+        )}
+
+      {/* <p className={styles.description} >
+        <code className={styles.code}>Minted: {minted?.toString()}</code>
+        </p> */}
       </main>
 
       <footer className={styles.footer}>
@@ -155,7 +183,7 @@ const Home = () => {
            ⚡️ <b > 0x0 </b>  ⚡️
         </a>
       </footer>
-      <Toaster/>
+      <Toaster />
     </div>
      
   )
