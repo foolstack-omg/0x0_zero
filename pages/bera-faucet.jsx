@@ -78,6 +78,8 @@ const Home = () => {
     
   //  console.log(totalSupplyData)
   // }, [totalSupplyData]);
+  const [isTransfering, setIsTransfering] = React.useState(false);
+
   const {
     data: signature,
     signMessage,
@@ -86,6 +88,7 @@ const Home = () => {
     onSuccess: (data, variables) => {
       console.log(data)
       console.log(process.env.NEXT_PUBLIC_API_HOST)
+      setIsTransfering(true)
       axios({
         method: 'post',
         url: `${process.env.NEXT_PUBLIC_API_HOST}/get_bera`,
@@ -112,6 +115,8 @@ const Home = () => {
           })
         }
         
+      }).finally(() => {
+        setIsTransfering(false)
       })
      
     },
@@ -147,9 +152,10 @@ const Home = () => {
        
         {mounted && isConnected && (
           <Button onClick={() => {
-            signMessage({message: `request to get 0.1 bera.`})
+            !isTransfering && signMessage({message: `request to get 0.1 bera.`})
           }}>
-             {`Send bera to ${address}` }
+            {isTransfering && `Transfering`}
+             {!isTransfering && `Send bera to ${address}` }
           </Button>
         )}
 
