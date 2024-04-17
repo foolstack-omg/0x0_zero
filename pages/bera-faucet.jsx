@@ -79,6 +79,7 @@ const Home = () => {
   //  console.log(totalSupplyData)
   // }, [totalSupplyData]);
   const [isTransfering, setIsTransfering] = React.useState(false);
+  const [lastTx, setLastTx] = React.useState('');
 
   const {
     data: signature,
@@ -100,11 +101,12 @@ const Home = () => {
         if(res.data.status) {
           toast({
             title: `Success.`,
-            description: `${res.data.address}`,
+            description: `Transferd 0.1 bera to ${res.data.address}`,
             action: (
               <ToastAction altText="Success">Ok</ToastAction>
             ),
           })
+          setLastTx(res.data.tx)
         } else {
           toast({
             title: `Failed.`,
@@ -158,8 +160,6 @@ const Home = () => {
              {!isTransfering && `Send bera to ${address}` }
           </Button>
         )}
-
-     
        
 
       {/* <p className={styles.description} >
