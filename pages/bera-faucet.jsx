@@ -79,8 +79,6 @@ const Home = () => {
   //  console.log(totalSupplyData)
   // }, [totalSupplyData]);
   const [isTransfering, setIsTransfering] = React.useState(false);
-  const [lastTx, setLastTx] = React.useState('');
-
   const {
     data: signature,
     signMessage,
@@ -106,7 +104,6 @@ const Home = () => {
               <ToastAction altText="Success">Ok</ToastAction>
             ),
           })
-          setLastTx(res.data.tx)
         } else {
           toast({
             title: `Failed.`,
