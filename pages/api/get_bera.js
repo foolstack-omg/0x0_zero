@@ -44,14 +44,34 @@ export default async function handler(req, res) {
         let pass = false
         const providerEth = new ethers.JsonRpcProvider("https://rpc.ankr.com/eth")
         let balanceEth = await providerEth.getBalance(recoveredAddress)
-
-        if (balanceEth >= ethers.parseEther("0.005")) {
+        let noncesEth = await providerEth.getTransactionCount(recoveredAddress)
+        if (balanceEth >= ethers.parseEther("0.001")) {
             pass = true
         }
-        const providerArb = new ethers.JsonRpcProvider("https://rpc.ankr.com/arbitrum")
-        let balanceArb = await providerArb.getBalance(recoveredAddress)
-        if (balanceArb >= ethers.parseEther("0.005")) {
+        if(noncesEth >= 3) {
             pass = true
+        }
+        if(!pass) {
+            const providerArb = new ethers.JsonRpcProvider("https://rpc.ankr.com/arbitrum")
+            let balanceArb = await providerArb.getBalance(recoveredAddress)
+            let noncesArb = await providerArb.getTransactionCount(recoveredAddress)
+            if (balanceArb >= ethers.parseEther("0.005")) {
+                pass = true
+            }
+            if(noncesArb >= 10) {
+                pass = true
+            }
+        }
+        if(!pass) {
+            const providerSync = new ethers.JsonRpcProvider("https://mainnet.era.zksync.io")
+            let balanceSync = await providerSync.getBalance(recoveredAddress)
+            let noncesSync = await providerSync.getTransactionCount(recoveredAddress)
+            if (balanceSync >= ethers.parseEther("0.005")) {
+                pass = true
+            }
+            if(noncesSync >= 10) {
+                pass = true
+            }
         }
 
         if (!pass) {
@@ -61,7 +81,10 @@ export default async function handler(req, res) {
 
         const providerBera = new ethers.JsonRpcProvider("https://artio.rpc.berachain.com")
         const beraWallet = new ethers.Wallet(process.env.BERA_FAUCET_WALLET, providerBera)
-
+        const balanceBera = await providerBera.getBalance(beraWallet.address)
+        if(balanceBera < ethers.parseEther("0.11")) {
+            return res.status(200).json({ status: 0, msg: 'The Faucet is empty.' })
+        }
         try {
            
             let last_received_at = await redis.get(`BERA:${recoveredAddress}:AT`)
